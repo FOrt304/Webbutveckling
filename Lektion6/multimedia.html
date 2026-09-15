@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="sv">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>Multimedia övning</title>
+    </head>
+    <body>
+        <h1>Multimedia övning</h1>
+
+        <p>YouTube Video</p>
+        <iframe 
+            width="560" 
+            height="315" 
+            src="https://www.youtube.com/embed/FkgRGzZ3I60?si=iXdwdjsgHy3grrHP" 
+            title="YouTube video player" 
+            sandbox="allow-scripts allow-same-origin"
+            allow="accelerometer; autoplay; gyroscope; picture-in-picture; allowfullscreen">
+        </iframe>
+
+        <p>Webbsida (Scratch) <span>[Super Broken]</span></p>
+        <iframe>
+            src="https://scratch.mit.edu/projects/1025641618/embed"
+            allowtransparency="true"
+            width="485"
+            height="402"
+            scrolling="no"
+            sandbox="allow-forms allow-scripts allow-same-origin"
+            allow="gyroscope; allowfullscreen"
+        </iframe>
+        <p>Video</p>
+        <video width="320" height="240" controls>
+            <source src="/Video/content_warning(15).mp4" type="video/mp4">
+            <source src="/Video/content_warning(15).webm" type="video/webm">
+            Din webbläsare stödjer inte videouppspelning.
+        </video>
+
+        <p>Ljudfil</p>
+        <audio controls preload="auto">
+            <source src="/Ljud/Jatter_Oger.mp3" type="audio/mp3">
+            <source src="/Ljud/Jatter_Oger.ogg" type="audio/ogg">
+            <p>Ladda ned:</p>
+            <ul>
+                <li><a href="/Ljud/Jatter_Oger.mp3" download>MP3</a></li>
+                <li><a href="/Ljud/Jatter_Oger.ogg" download>Ogg Vorbis</a></li>
+            </ul>
+            Din webbläsare stödjer inte ljuduppspelning.
+        </audio>
+    </body>
+</html>
