@@ -31,6 +31,14 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+      - name: Update embed timestamp
+        shell: bash
+        run: |
+          updated_at="$(date -u '+%Y-%m-%dT%H:%M:%S+00:00')"
+          updated_label="$(date -u '+%Y-%m-%d %H:%M UTC')"
+          sed -i "s#<meta property=\"article:modified_time\" content=\"[^\"]*\">#<meta property=\"article:modified_time\" content=\"$updated_at\">#" index.html
+          sed -i "s#<meta property=\"og:updated_time\" content=\"[^\"]*\">#<meta property=\"og:updated_time\" content=\"$updated_at\">#" index.html
+          sed -i -E "s#Senast uppdaterad: [^<]+#Senast uppdaterad: $updated_label.#g" index.html
       - name: Setup Pages
         uses: actions/configure-pages@v5
       - name: Upload artifact
