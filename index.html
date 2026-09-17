@@ -129,6 +129,12 @@
 			font-weight: 700;
 		}
 
+		.views img {
+			display: block;
+			height: 20px;
+			width: auto;
+		}
+
 		.eye {
 			font-size: 1rem;
 			line-height: 1;
@@ -215,8 +221,7 @@
 	<footer>
 		<div class="footer-meta">
 			<span class="views" aria-label="Antal visningar">
-				<span class="eye" aria-hidden="true">👁</span>
-				<span id="view-count">0</span>
+				<img src="https://api.visitorbadge.io/api/visitors?path=fort304.github.io%2FWebbutveckling&label=Views&countColor=%23c64b36" alt="Antal visningar">
 			</span>
 			<div class="footer-copy">
 				<span>Webbutveckling · @FOrt404 · GitHub Pages</span>
@@ -226,25 +231,10 @@
 	</footer>
 
 	<script>
-		(function () {
-			const storageKey = 'webbutveckling_view_count';
-			const countEl = document.getElementById('view-count');
+		(async function () {
 			const updatedEl = document.getElementById('last-updated');
 			const metaDescription = document.querySelector('meta[name="description"]');
 			const ogDescription = document.querySelector('meta[property="og:description"]');
-			let count = 0;
-
-			try {
-				count = Number(localStorage.getItem(storageKey) || 0);
-				count += 1;
-				localStorage.setItem(storageKey, String(count));
-			} catch (error) {
-				count = 1;
-			}
-
-			if (countEl) {
-				countEl.textContent = count.toLocaleString('sv-SE');
-			}
 
 			if (updatedEl) {
 				const now = new Date();
