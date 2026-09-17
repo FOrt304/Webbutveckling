@@ -129,12 +129,6 @@
 			font-weight: 700;
 		}
 
-		.views img {
-			display: block;
-			height: 20px;
-			width: auto;
-		}
-
 		.eye {
 			font-size: 1rem;
 			line-height: 1;
@@ -220,8 +214,9 @@
 
 	<footer>
 		<div class="footer-meta">
-			<span class="views" aria-label="Antal visningar">
-				<img src="https://api.visitorbadge.io/api/visitors?path=fort304.github.io%2FWebbutveckling&label=Views&countColor=%23c64b36" alt="Antal visningar">
+			<span class="views" aria-label="Aktiva visningar">
+				<span class="eye" aria-hidden="true">👁</span>
+				<span id="view-count">1</span>
 			</span>
 			<div class="footer-copy">
 				<span>Webbutveckling · @FOrt404 · GitHub Pages</span>
@@ -231,10 +226,51 @@
 	</footer>
 
 	<script>
-		(async function () {
+		(function () {
+			const activeViewsKey = 'webbutveckling_active_views';
+			const tabIdKey = 'webbutveckling_tab_id';
+			const countEl = document.getElementById('view-count');
 			const updatedEl = document.getElementById('last-updated');
 			const metaDescription = document.querySelector('meta[name="description"]');
 			const ogDescription = document.querySelector('meta[property="og:description"]');
+			const heartbeatInterval = 15000;
+			const activeFor = 45000;
+			let tabId;
+
+			try {
+				tabId = sessionStorage.getItem(tabIdKey);
+				if (!tabId) {
+					tabId = Date.now().toString(36) + Math.random().toString(36).slice(2);
+					sessionStorage.setItem(tabIdKey, tabId);
+				}
+
+				const getActiveViews = function () {
+					const now = Date.now();
+					const views = JSON.parse(localStorage.getItem(activeViewsKey) || '{}');
+					const activeViews = Object.keys(views).filter(function (id) {
+						return now - views[id] < activeFor;
+					});
+					if (countEl) countEl.textContent = activeViews.length.toLocaleString('sv-SE');
+				};
+
+				const updatePresence = function () {
+					const views = JSON.parse(localStorage.getItem(activeViewsKey) || '{}');
+					views[tabId] = Date.now();
+					localStorage.setItem(activeViewsKey, JSON.stringify(views));
+					getActiveViews();
+				};
+
+				updatePresence();
+				window.setInterval(updatePresence, heartbeatInterval);
+				window.addEventListener('storage', getActiveViews);
+				window.addEventListener('beforeunload', function () {
+					const views = JSON.parse(localStorage.getItem(activeViewsKey) || '{}');
+					delete views[tabId];
+					localStorage.setItem(activeViewsKey, JSON.stringify(views));
+				});
+			} catch (error) {
+				if (countEl) countEl.textContent = '1';
+			}
 
 			if (updatedEl) {
 				const now = new Date();
