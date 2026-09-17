@@ -111,6 +111,12 @@
 			flex-wrap: wrap;
 		}
 
+		.footer-copy {
+			display: flex;
+			flex-direction: column;
+			gap: .15rem;
+		}
+
 		.views {
 			display: inline-flex;
 			align-items: center;
@@ -212,7 +218,10 @@
 				<span class="eye" aria-hidden="true">👁</span>
 				<span id="view-count">0</span>
 			</span>
-			<span>Webbutveckling · @FOrt404 · GitHub Pages</span>
+			<div class="footer-copy">
+				<span>Webbutveckling · @FOrt404 · GitHub Pages</span>
+				<span id="last-updated">Senast uppdaterad: --</span>
+			</div>
 		</div>
 	</footer>
 
@@ -220,6 +229,9 @@
 		(function () {
 			const storageKey = 'webbutveckling_view_count';
 			const countEl = document.getElementById('view-count');
+			const updatedEl = document.getElementById('last-updated');
+			const metaDescription = document.querySelector('meta[name="description"]');
+			const ogDescription = document.querySelector('meta[property="og:description"]');
 			let count = 0;
 
 			try {
@@ -232,6 +244,21 @@
 
 			if (countEl) {
 				countEl.textContent = count.toLocaleString('sv-SE');
+			}
+
+			if (updatedEl) {
+				const now = new Date();
+				const formatted = new Intl.DateTimeFormat('sv-SE', {
+					day: 'numeric',
+					month: 'long',
+					year: 'numeric',
+					hour: '2-digit',
+					minute: '2-digit'
+				}).format(now);
+				updatedEl.textContent = 'Senast uppdaterad: ' + formatted;
+				const summaryText = 'Alla lektioner och filer i Alexander Lundbergs webbutvecklingsprojekt. Senast uppdaterad: ' + formatted + '.';
+				if (metaDescription) metaDescription.setAttribute('content', summaryText);
+				if (ogDescription) ogDescription.setAttribute('content', summaryText);
 			}
 		})();
 	</script>
