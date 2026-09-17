@@ -225,52 +225,47 @@
 		</div>
 	</footer>
 
-	<script>
+	<script type="module">
+		import { initializeApp } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-app.js';
+		import { getAuth, signInAnonymously } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-auth.js';
+		import { getDatabase, onDisconnect, onValue, ref, remove, set } from 'https://www.gstatic.com/firebasejs/12.2.1/firebase-database.js';
+
+		const firebaseConfig = {
+			apiKey: 'AIzaSyDN80yxHiKPTcTr_3o5HrjMdKGqJ9sFVYU',
+			authDomain: 'webbutveckling-fort404.firebaseapp.com',
+			databaseURL: 'https://webbutveckling-fort404-default-rtdb.europe-west1.firebasedatabase.app/',
+			projectId: 'webbutveckling-fort404',
+			storageBucket: 'webbutveckling-fort404.firebasestorage.app',
+			messagingSenderId: '285209919641',
+			appId: '1:285209919641:web:c475560e54281921153808',
+			measurementId: 'G-M80EG64CP5'
+		};
+
 		(function () {
-			const activeViewsKey = 'webbutveckling_active_views';
-			const tabIdKey = 'webbutveckling_tab_id';
 			const countEl = document.getElementById('view-count');
 			const updatedEl = document.getElementById('last-updated');
 			const metaDescription = document.querySelector('meta[name="description"]');
 			const ogDescription = document.querySelector('meta[property="og:description"]');
-			const heartbeatInterval = 15000;
-			const activeFor = 45000;
-			let tabId;
+			const app = initializeApp(firebaseConfig);
+			const auth = getAuth(app);
+			const database = getDatabase(app);
 
-			try {
-				tabId = sessionStorage.getItem(tabIdKey);
-				if (!tabId) {
-					tabId = Date.now().toString(36) + Math.random().toString(36).slice(2);
-					sessionStorage.setItem(tabIdKey, tabId);
-				}
-
-				const getActiveViews = function () {
-					const now = Date.now();
-					const views = JSON.parse(localStorage.getItem(activeViewsKey) || '{}');
-					const activeViews = Object.keys(views).filter(function (id) {
-						return now - views[id] < activeFor;
+			signInAnonymously(auth).then(function (userCredential) {
+				const presenceRef = ref(database, 'activeViews/' + userCredential.user.uid + '_' + crypto.randomUUID());
+				return onDisconnect(presenceRef).remove().then(function () {
+					return set(presenceRef, true);
+				}).then(function () {
+					onValue(ref(database, 'activeViews'), function (snapshot) {
+						if (countEl) countEl.textContent = (snapshot.size || 0).toLocaleString('sv-SE');
 					});
-					if (countEl) countEl.textContent = activeViews.length.toLocaleString('sv-SE');
-				};
-
-				const updatePresence = function () {
-					const views = JSON.parse(localStorage.getItem(activeViewsKey) || '{}');
-					views[tabId] = Date.now();
-					localStorage.setItem(activeViewsKey, JSON.stringify(views));
-					getActiveViews();
-				};
-
-				updatePresence();
-				window.setInterval(updatePresence, heartbeatInterval);
-				window.addEventListener('storage', getActiveViews);
-				window.addEventListener('beforeunload', function () {
-					const views = JSON.parse(localStorage.getItem(activeViewsKey) || '{}');
-					delete views[tabId];
-					localStorage.setItem(activeViewsKey, JSON.stringify(views));
+					window.addEventListener('beforeunload', function () {
+						remove(presenceRef);
+					});
 				});
-			} catch (error) {
+			}).catch(function (error) {
+				console.error('Firebase active view counter failed:', error);
 				if (countEl) countEl.textContent = '1';
-			}
+			});
 
 			if (updatedEl) {
 				const now = new Date();
